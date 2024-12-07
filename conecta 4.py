@@ -13,7 +13,7 @@ def crear_tablero():
 
 def imprimir_tablero(tablero, ultima_jugada=None):
 
-    print("\n  0   1   2   3   4   5   6")
+    print("\n   0   1   2   3   4   5   6")
     print(" +---+---+---+---+---+---+---+")
     for fila in range(5, -1, -1):
         fila_str = []
@@ -92,30 +92,28 @@ def juego():
     imprimir_tablero(tablero)
 
     modo = input("Selecciona el modo de juego:\n1. Jugador vs Jugador\n2. Jugador vs IA\nTu elección: ")
-    vs_ia = modo == "2"
+    contra_bot = modo == "2"
 
     # Selección aleatoria de quién empieza
     turno = random.choice([0, 1])
-    print(f"\nEl jugador que comienza es {'Jugador 1 (X)' if turno == 0 else ('IA (O)' if vs_ia else 'Jugador 2 (O)')}")
+    print(f"\nEl jugador que comienza es {'Jugador 1 (X)' if turno == 0 else ('IA (O)' if contra_bot else 'Jugador 2 (O)')}")
 
     while not juego_terminado:
         if turno == 0:
             print("\nTurno del Jugador 1 (X)")
         else:
-            if vs_ia:
+            if contra_bot:
                 print("\nTurno de la IA (O)")
             else:
                 print("\nTurno del Jugador 2 (O)")
 
-        if vs_ia and turno == 1:
+        if contra_bot and turno == 1:
             columna = mover_ia(tablero, 2)
         else:
-            try:
-                columna = int(input("Selecciona una columna (0-6): "))
-            except ValueError:
+            columna = int(input("Selecciona una columna (0-6): "))
+            if columna <0 or columna > 6:
                 print("Entrada inválida. Por favor ingresa un número entre 0 y 6.")
-                continue
-
+        
         if not es_valido(tablero, columna):
             print("Movimiento inválido. Intenta de nuevo.")
             continue
@@ -128,7 +126,7 @@ def juego():
         imprimir_tablero(tablero, ultima_jugada)
 
         if verificar_ganador(tablero, ficha):
-            if vs_ia and turno == 1:
+            if contra_bot and turno == 1:
                 print("\n¡La IA gana! ¡Mejor suerte la próxima vez!")
             else:
                 print(f"\n¡El Jugador {turno + 1} gana! ¡Felicidades!")
