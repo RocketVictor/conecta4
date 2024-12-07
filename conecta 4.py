@@ -2,20 +2,17 @@ import numpy as np
 import random
 
 # Códigos de color ANSI para resaltar fichas
-RESET = "\033[0m"
-RED = "\033[31m"  # Rojo
-YELLOW = "\033[33m"  # Amarillo
-BRIGHT = "\033[1m"  # Negrita
+REINICIO = "\033[0m"
+ROJO = "\033[31m"  # Rojo
+AMARILLO = "\033[33m"  # Amarillo
+NEGRO = "\033[1m"  # Negro
 
 def crear_tablero():
-    """Crea un tablero vacío para Conecta 4."""
+   
     return np.zeros((6, 7), dtype=int)
 
 def imprimir_tablero(tablero, ultima_jugada=None):
-    """
-    Imprime el tablero en un formato visual amigable.
-    Destaca la última ficha jugada.
-    """
+
     print("\n  0   1   2   3   4   5   6")
     print(" +---+---+---+---+---+---+---+")
     for fila in range(5, -1, -1):
@@ -24,8 +21,8 @@ def imprimir_tablero(tablero, ultima_jugada=None):
             celda = tablero[fila][col]
             if ultima_jugada and (fila, col) == ultima_jugada:
                 # Última ficha jugada resaltada
-                ficha = (f"{BRIGHT + RED}X{RESET}" if celda == 1 else 
-                         f"{BRIGHT + YELLOW}O{RESET}")
+                ficha = (f"{NEGRO + ROJO}X{REINICIO}" if celda == 1 else 
+                         f"{NEGRO + AMARILLO}O{REINICIO}")
             else:
                 ficha = " " if celda == 0 else ("X" if celda == 1 else "O")
             fila_str.append(ficha)
@@ -33,21 +30,21 @@ def imprimir_tablero(tablero, ultima_jugada=None):
         print(" +---+---+---+---+---+---+---+")
 
 def es_valido(tablero, columna):
-    """Verifica si se puede jugar en la columna indicada."""
+   
     return columna >= 0 and columna < 7 and tablero[5][columna] == 0
 
 def encontrar_fila(tablero, columna):
-    """Encuentra la fila más baja disponible en una columna."""
+    
     for fila in range(6):
         if tablero[fila][columna] == 0:
             return fila
 
 def soltar_ficha(tablero, fila, columna, ficha):
-    """Coloca una ficha en el tablero."""
+    
     tablero[fila][columna] = ficha
 
 def verificar_ganador(tablero, ficha):
-    """Comprueba si hay un ganador."""
+    
     # Comprobar horizontal
     for fila in range(6):
         for col in range(4):
@@ -75,18 +72,18 @@ def verificar_ganador(tablero, ficha):
     return False
 
 def tablero_lleno(tablero):
-    """Verifica si el tablero está lleno."""
+    
     return all(tablero[5][col] != 0 for col in range(7))
 
 def mover_ia(tablero, ficha):
-    """Movimiento básico de la IA basado en selección válida."""
+    
     for columna in range(7):
         if es_valido(tablero, columna):
             return columna
     return -1
 
 def juego():
-    """Función principal para jugar Conecta 4."""
+    
     tablero = crear_tablero()
     juego_terminado = False
     ultima_jugada = None
