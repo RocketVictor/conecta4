@@ -91,19 +91,19 @@ def juego():
     print("\n¡Bienvenidos a Conecta 4!\n")
     imprimir_tablero(tablero)
 
-    modo = input("Selecciona el modo de juego:\n1. Jugador vs Jugador\n2. Jugador vs IA\nTu elección: ")
+    modo = input("Selecciona el modo de juego:\n1. Jugador vs Jugador\n2. Jugador vs Fatimer\nTu elección: ")
     contra_bot = modo == "2"
 
     # Selección aleatoria de quién empieza
     turno = random.choice([0, 1])
-    print(f"\nEl jugador que comienza es {'Jugador 1 (X)' if turno == 0 else ('IA (O)' if contra_bot else 'Jugador 2 (O)')}")
+    print(f"\nEl jugador que comienza es {'Jugador 1 (X)' if turno == 0 else ('Fatimer (X)' if contra_bot else 'Jugador 2 (O)')}")
 
     while not juego_terminado:
         if turno == 0:
             print("\nTurno del Jugador 1 (X)")
         else:
             if contra_bot:
-                print("\nTurno de la IA (O)")
+                print("\nTurno de Fatimer (X)")
             else:
                 print("\nTurno del Jugador 2 (O)")
 
@@ -127,7 +127,7 @@ def juego():
 
         if verificar_ganador(tablero, ficha):
             if contra_bot and turno == 1:
-                print("\n¡La IA gana! ¡Mejor suerte la próxima vez!")
+                print("\n¡Has perdido! !No puedes contra Fatimer!")
             else:
                 print(f"\n¡El Jugador {turno + 1} gana! ¡Felicidades!")
             juego_terminado = True
