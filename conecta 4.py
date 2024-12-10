@@ -23,7 +23,12 @@ def imprimir_tablero(tablero, ultima_jugada=None):
                 ficha = (f"{NEGRO + ROJO}X{REINICIO}" if celda == 1 else 
                          f"{NEGRO + AMARILLO}O{REINICIO}")
             else:
-                ficha = " " if celda == 0 else ("X" if celda == 1 else "O")
+                if celda == 0:
+                    ficha = " "
+                elif celda == 1:
+                    ficha = "X"
+                else:
+                    ficha = "O"
             fila_str.append(ficha)
         print(" | " + " | ".join(fila_str) + " |")
         print(" +---+---+---+---+---+---+---+")
