@@ -19,8 +19,10 @@ def imprimir_tablero(tablero, ultima_jugada=None):
         for col in range(7):
             celda = tablero[fila][col]
             if ultima_jugada and (fila, col) == ultima_jugada:
-                ficha = (f"{NEGRO + ROJO}X{REINICIO}" if celda == 1 else 
-                         f"{NEGRO + AMARILLO}O{REINICIO}")
+                if celda == 1:
+                    ficha = f"{NEGRO + ROJO}X{REINICIO}"
+                else:
+                    ficha = f"{NEGRO + AMARILLO}O{REINICIO}"
             else:
                 if celda == 0:
                     ficha = " "
