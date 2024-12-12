@@ -1,7 +1,6 @@
 import numpy as np
 import random
 import time
-import threading
 
 # Códigos de color ANSI para resaltar fichas
 REINICIO = "\033[0m"
@@ -104,19 +103,6 @@ def mover_ia(tablero, ficha):
     columnas_validas = [col for col in range(7) if es_valido(tablero, col)]
     return random.choice(columnas_validas)
 
-# Función para actualizar el tiempo y mostrarlo correctamente
-def actualizar_tiempo(tiempo_restante, turno, stop_event):
-    while tiempo_restante[turno] > 0:
-        if stop_event.is_set():
-            break
-        print(f"Tiempo restante: {tiempo_restante[turno]} segundos", end="\r", flush=True)
-        time.sleep(1)
-        tiempo_restante[turno] -= 1
-
-    if tiempo_restante[turno] <= 0:
-        print(f"Tiempo restante: {0} segundos")
-
-# Función principal del juego
 def juego():
     tablero = crear_tablero()
     juego_terminado = False
@@ -132,46 +118,45 @@ def juego():
     print(f"\nEl jugador que comienza es {'Jugador 1 (X)' if turno == 0 else ('Fatimer (X)' if contra_bot else 'Jugador 2 (O)')}")
 
     tiempo_restante = [45, 45]  # 45 segundos para ambos jugadores
-    stop_event = threading.Event()  # Evento de paro del temporizador
 
     while not juego_terminado:
+        inicio_turno = time.time()
+        
         if turno == 0:
-            print(f"\nTurno del Jugador 1 (X) ")
+            print(f"\nTurno del Jugador 1 (X) - Tiempo restante: {int(tiempo_restante[0])} segundos")
         else:
             if contra_bot:
-                print(f"\nTurno de Fatimer (O) ")
+                print(f"\nTurno de Fatimer (O) - Tiempo restante: {int(tiempo_restante[1])} segundos")
             else:
-                print(f"\nTurno del Jugador 2 (O) ")
+                print(f"\nTurno del Jugador 2 (O) - Tiempo restante: {int(tiempo_restante[1])} segundos")
+        
+        if tiempo_restante[turno] <= 0:
+            if turno == 1 and contra_bot:
+                print("\nDerrotaste a Fatimer, ¡felicidades!")
+            elif turno == 0 and contra_bot:
+                print("\n¡Has perdido! ¡No puedes contra Fatimer!")
+            else:
+                print(f"\nEl Jugador {turno + 1} se quedó sin tiempo. ¡El otro jugador gana!")
+            juego_terminado = True
+            break
 
-        # Iniciar el hilo para el contador de tiempo
-        stop_event.clear()  # Reiniciar el evento de paro para el nuevo turno
-        timer_thread = threading.Thread(target=actualizar_tiempo, args=(tiempo_restante, turno, stop_event))
-        timer_thread.start()
-
-        entrada_valida = False
-        while tiempo_restante[turno] > 0 and not entrada_valida:
+        if contra_bot and turno == 1:
+            columna = mover_ia(tablero, 2)
+        else:
             try:
-                columna = int(input("\nSelecciona una columna (0-6): "))
+                columna = int(input("Selecciona una columna (0-6): "))
                 if columna < 0 or columna > 6:
                     raise ValueError
-                if not es_valido(tablero, columna):
-                    print("Movimiento inválido. Intenta de nuevo.")
-                    continue
-                entrada_valida = True
             except ValueError:
                 print("Entrada inválida. Por favor ingresa un número entre 0 y 6.")
-            
-            # Verificar si el tiempo se ha agotado
-            if tiempo_restante[turno] <= 0:
-                print(f"\nEl tiempo del Jugador {turno + 1} se agotó. ¡Pierde el turno!")
-                juego_terminado = True
-                stop_event.set()  # Detener el temporizador si el jugador se queda sin tiempo
-                break
+                continue
 
-        timer_thread.join()
+        tiempo_transcurrido = time.time() - inicio_turno
+        tiempo_restante[turno] -= tiempo_transcurrido
 
-        if juego_terminado:
-            break
+        if not es_valido(tablero, columna):
+            print("Movimiento inválido. Intenta de nuevo.")
+            continue
 
         fila = encontrar_fila(tablero, columna)
         ficha = 1 if turno == 0 else 2
@@ -181,13 +166,18 @@ def juego():
         imprimir_tablero(tablero, ultima_jugada)
 
         if verificar_ganador(tablero, ficha):
-            print(f"\n¡El Jugador {turno + 1} gana! ¡Felicidades!")
+            if contra_bot and turno == 1:
+                print("\n¡Has perdido! ¡No puedes contra Fatimer!")
+            elif contra_bot and turno == 0:
+                print("\nDerrotaste a Fatimer, ¡felicidades!")
+            else:
+                print(f"\n¡El Jugador {turno + 1} gana! ¡Felicidades!")
             juego_terminado = True
         elif tablero_lleno(tablero):
-            print("\n¡El juego termina en empate!")
+            print("\n¡El juego termina en empate! ¡No hay más movimientos!")
             juego_terminado = True
         else:
-            turno = (turno + 1) % 2  # Cambiar turno
+            turno = (turno + 1) % 2
 
 if __name__ == "__main__":
     juego()
