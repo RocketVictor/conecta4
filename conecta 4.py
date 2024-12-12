@@ -120,7 +120,6 @@ def juego():
         print(f"\nEl jugador que comienza es {'Jugador 1 (X)' if turno == 0 else ('Fatimer (X)' if contra_bot else 'Jugador 2 (O)')}")
 
         tiempo_restante = [45, 45]  # 45 segundos para ambos jugadores
-
         while not juego_terminado:
             inicio_turno = time.time()
             
@@ -145,13 +144,13 @@ def juego():
             if contra_bot and turno == 1:
                 columna = mover_ia(tablero, 2)
             else:
-                try:
-                    columna = int(input("Selecciona una columna (0-6): "))
-                    if columna < 0 or columna > 6:
-                        raise ValueError
-                except ValueError:
-                    print("Entrada inválida. Por favor ingresa un número entre 0 y 6.")
-                    continue
+                columna = -1
+                while columna < 0 or columna > 6:
+                    entrada = input("Selecciona una columna (0-6): ")
+                    try:
+                        columna = int(entrada)  # Intentar convertir a entero
+                    except ValueError:
+                        continue
 
             tiempo_transcurrido = time.time() - inicio_turno
             tiempo_restante[turno] -= tiempo_transcurrido
